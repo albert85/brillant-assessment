@@ -1,10 +1,27 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import { phoneValidation } from '../../helper/util';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation } from 'react-query';
+import { toast } from 'react-toastify';
+import { putRequest } from '../../helper/apiCall';
+import { CHANGEPASSWORD } from '../../helper/queryUrl';
 
 const ChangePassword = () => {
   const [isSuccess, setSuccess] = React.useState(false);
+  const navigate = useNavigate()
+
+  const changePasswordMutate = useMutation(putRequest, {
+    onSuccess(res){
+      toast.success(res.message)
+      navigate('/')
+    }
+  })
+
+
+  const handleChangePassword = async (values) => {
+    await changePasswordMutate.mutateAsync({ url: `${CHANGEPASSWORD}/:userId`, data: {...values }})
+  }
 
   return (
     <div className="h-screen">
@@ -19,7 +36,7 @@ const ChangePassword = () => {
             }}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
-                setSuccess(true)
+                handleChangePassword(values)
                 setSubmitting(false);
               }, 400);
             }}

@@ -1,9 +1,26 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import { emailValidation } from '../../helper/util';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation } from '../../../node_modules/react-query/es/react/useMutation';
+import { postRequest } from '../../helper/apiCall';
+import { toast } from 'react-toastify';
+import { REGISTER } from '../../helper/queryUrl';
 
 const Registration = () => {
+  const navigate = useNavigate()
+
+  const registerMutate = useMutation(postRequest, {
+    onSuccess(res){
+      toast.success(res.message)
+      navigate('/email-info')
+    }
+  })
+
+  const handleRegistration = async (values) => {
+    await registerMutate.mutateAsync({ url: REGISTER, data: { ...values}})
+  }
+  
   return (
     <div className="h-screen">
       <div className="h-screen flex justify-center items-center">
@@ -13,7 +30,7 @@ const Registration = () => {
               email: '',
               password: '',
               phoneNumber: '',
-              interest: '',
+              interests: '',
             }}
             validate={(values) => {
               const errors = emailValidation({values}) || {};
@@ -25,7 +42,7 @@ const Registration = () => {
             }}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
+                handleRegistration(values);
                 setSubmitting(false);
               }, 400);
             }}
@@ -76,16 +93,16 @@ const Registration = () => {
                 <p>Special Interest</p>
                 <input
                   type="text"
-                  name="interest"
+                  name="interests"
                   placeholder="Special Interest e.g. football"
                   className=" border-gray-400 border-2 rounded-md p-2 my-2 w-full"
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={values.interest}
+                  value={values.interests}
                 />
-                {errors.interest && touched.interest && (
+                {errors.interests && touched.interests && (
                   <p className="text-red-700 text-[10px]">
-                    {errors.interest}
+                    {errors.interests}
                   </p>
                 )}
                 <p className="mt-3">Password</p>
@@ -109,7 +126,7 @@ const Registration = () => {
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Register
+                  {registerMutate.isLoading ? "Submitting" : "Register"}
                 </button>
                 <div className="flex justify-center w-full">
                   <p className="text-[12px]">Already registered? <Link to='/' className="text-[12px] text-blue-700">Login</Link></p>
