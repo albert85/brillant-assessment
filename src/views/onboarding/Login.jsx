@@ -13,6 +13,7 @@ const Login = () => {
   const loginMutate = useMutation(postRequest, {
     onSuccess(res){
       toast.success(res.message)
+      localStorage.setItem('@userToken', res.token)
       navigate('/auth/profile')
     }
   })

@@ -10,7 +10,7 @@ baseAxiosMethod.interceptors.request.use(
     const token = localStorage.getItem('@userToken');
     if (token) {
       // eslint-disable-next-line no-param-reassign
-      config.headers.common.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
