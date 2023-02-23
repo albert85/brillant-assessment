@@ -5,9 +5,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { postRequest } from '../../helper/apiCall';
 import { toast } from 'react-toastify';
-import { SEND_EMAIL } from '../../helper/queryUrl';
+import { VERIFYEMAIL } from '../../helper/queryUrl';
 
-const SendEmail = () => {
+const ForgotPasswordEmail = () => {
   const [isSuccess, setSuccess] = React.useState(false);
   const navigate = useNavigate()
 
@@ -19,7 +19,7 @@ const SendEmail = () => {
   })
 
   const handleSendEmail = async (values) => {
-    await verifyEmailMutate.mutateAsync({ url: SEND_EMAIL, data: {...values }})
+    await verifyEmailMutate.mutateAsync({ url: VERIFYEMAIL, data: {...values }})
   }
 
   return (
@@ -54,8 +54,8 @@ const SendEmail = () => {
                 className="flex flex-col p-5 justify-start items-start w-fit mx-auto my-auto h-full shadow-lg md:w-[500px]"
                 onSubmit={handleSubmit}
               >
-                 <p className="text-xl font-semibold mb-4">Email Verification</p>
-                 
+                 <p className="text-xl font-semibold mb-4">Password Reset</p>
+
                 <p>Enter Email address</p>
                 <input
                   type="email"
@@ -74,7 +74,7 @@ const SendEmail = () => {
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  {verifyEmailMutate.isLoading ? "Submitting...." : "Send to email"}
+                  Send to email
                 </button>
                 <div className="flex justify-center w-full">
                   {isSuccess && (<p className="text-[12px]"> <Link to='/' className="text-[12px] text-blue-700">Resend email</Link></p>)}
@@ -89,4 +89,4 @@ const SendEmail = () => {
   );
 };
 
-export default SendEmail;
+export default ForgotPasswordEmail;

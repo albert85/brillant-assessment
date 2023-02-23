@@ -12,9 +12,14 @@ const Login = () => {
 
   const loginMutate = useMutation(postRequest, {
     onSuccess(res){
-      toast.success(res.message)
       localStorage.setItem('@userToken', res.token)
-      navigate('/auth/profile')
+            
+      if(!res.data.isEmailVerified){
+        navigate('/send-email')
+      } else {
+        toast.success(res.message)
+        navigate('/auth/profile')
+      }
     }
   })
 
@@ -90,7 +95,7 @@ const Login = () => {
                   <p className="text-red-700 text-[10px]">{errors.password}</p>
                 )}
                 <div className="flex justify-end w-full">
-                  <Link to='/send-email' className="text-[12px] text-red-700">Forget password</Link>
+                  <Link to='/forgot-password-email' className="text-[12px] text-red-700">Forget password</Link>
                 </div>
                 <button
                   className="bg-blue-600 w-full mt-4 py-2 my-2 rounded-md text-white"

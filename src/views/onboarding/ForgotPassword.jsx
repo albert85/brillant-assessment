@@ -1,26 +1,54 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import { phoneValidation } from '../../helper/util';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useMutation } from 'react-query';
+import { toast } from 'react-toastify';
+import { putRequest } from '../../helper/apiCall';
+import { FORGOTPASSWORD } from '../../helper/queryUrl';
 
 const ForgotPassword = () => {
+  const params = useLocation()?.search?.split('=')[1];
   const [isSuccess, setSuccess] = React.useState(false);
-  const [mode, setMode] = React.useState('email');
+  const navigate = useNavigate()
+
+  const forgotPasswordMutate = useMutation(putRequest, {
+    onSuccess(res){
+      toast.success(res.message)
+      navigate('/')
+    }
+  })
+
+  const handleForgotPassword = async (values) => {
+    await forgotPasswordMutate.mutateAsync({ url: `${FORGOTPASSWORD}/${params}`, data: { newPassword: values.password }})
+  }
 
   return (
     <div className="h-screen">
       <div className="h-screen flex justify-center items-center">
         <div>
           <Formik
-            initialValues={{ phoneNumber: '' }}
+            initialValues={{ password: '', confirmedPassword: '' }}
             validate={(values) => {
-              const errors = phoneValidation({values, msg: 'Phone Number Required'}) || {};
+              const errors = {}
+
+              if(!values.password){
+                errors['password'] = 'Required'
+              }
+
+              if(!values.confirmedPassword){
+                errors['password'] = 'Required'
+              }
+
+              if(values.confirmedPassword !== values.password){
+                errors['password'] = 'Required'
+              }
 
               return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
-                setSuccess(true)
+                handleForgotPassword(values)
                 setSubmitting(false);
               }, 400);
             }}
@@ -39,48 +67,39 @@ const ForgotPassword = () => {
                 className="flex flex-col p-5 justify-start items-start w-fit mx-auto my-auto h-full shadow-lg md:w-[500px]"
                 onSubmit={handleSubmit}
               >
-                <p className="text-lg mb-4 font-bold">Forgot Password</p>
-                {!isSuccess && (<div className="w-full">
-                <p className="text-base">Enter phone number / Email Address</p>
+                <p className="text-lg mb-4 font-bold">Change new Password</p>
+                <p className="text-base">Enter new password</p>
                 <input
-                  type="text"
-                  name="phoneNumber"
-                  placeholder="Phone number / Email Address"
+                  type="password"
+                  name="password"
+                  placeholder="password"
                   className=" border-gray-400 border-2 rounded-md p-2 my-2 w-full"
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={values.phoneNumber}
+                  value={values.password}
                 />
-                {errors.phoneNumber && touched.phoneNumber && (
-                  <p className="text-red-700 text-[10px]">{errors.phoneNumber}</p>
+                {errors.password && touched.password && (
+                  <p className="text-red-700 text-[10px]">{errors.password}</p>
                 )}
-
-                </div>)}
-                {(isSuccess && mode === 'phone') && (<div className="w-full">
-                  <p>Enter verification code</p>
-                  <input
-                    type="text"
-                    name="verificationCode"
-                    placeholder="verification code"
-                    className=" border-gray-400 border-2 rounded-md p-2 my-2 w-full"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.verificationCode}
-                  />
-                  {errors.verificationCode && touched.verificationCode && (
-                    <p className="text-red-700 text-[10px]">{errors.verificationCode}</p>
-                  )}
-
-                </div>)}
-                {(isSuccess && mode === 'email') && (<div className="w-full">
-                  <p>Verification link was sent to your email</p>
-                </div>)}
+                <p className="text-base">Enter Confirmed password</p>
+                <input
+                  type="password"
+                  name="confirmedPassword"
+                  placeholder="confirmed Password"
+                  className=" border-gray-400 border-2 rounded-md p-2 my-2 w-full"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.confirmedPassword}
+                />
+                {errors.confirmedPassword && touched.confirmedPassword && (
+                  <p className="text-red-700 text-[10px]">{errors.confirmedPassword}</p>
+                )}
                 <button
                   className="bg-blue-600 w-full mt-4 py-2 my-2 rounded-md text-white"
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  Send
+                  {forgotPasswordMutate.isLoading ? "Submitting...." : "Send"}
                 </button>
                 <div className="flex justify-center w-full">
                   {isSuccess && (<p className="text-[12px]"> <Link to='/' className="text-[12px] text-blue-700">Resend code</Link></p>)}

@@ -3,7 +3,7 @@ import './App.css';
 import { BrowserRouter,Route, Routes } from 'react-router-dom';
 import Login from './views/onboarding/Login';
 import Registration from './views/onboarding/Registration';
-import SendEmail from './views/onboarding/SendEmail';
+import ForgotPasswordEmail from './views/onboarding/ForgotPasswordEmail';
 import VerifyPhoneNumber from './views/onboarding/VerifyPhone';
 import ForgotPassword from './views/onboarding/ForgotPassword';
 import ChangePassword from './views/onboarding/ChangePassword';
@@ -20,6 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import VerifyEmail from './views/onboarding/verifyEmail';
 import EmailInfoPage from './views/onboarding/EmailInfo';
+import SendEmail from './views/onboarding/SendEmail';
 
 const queryClient = new QueryClient()
 
@@ -30,7 +31,7 @@ function App() {
       <Routes>
       <Route exact path='/' element={<Login />} />
       <Route exact path='/register' element={<Registration />} />
-      <Route exact path='/send-email' element={<SendEmail />} />
+      <Route exact path='/forgot-password-email' element={<ForgotPasswordEmail />} />
       <Route exact path='/send-email' element={<SendEmail />} />
       <Route exact path='/verify-email' element={<VerifyEmail />} />
       <Route exact path='/verify-phone-number' element={<VerifyPhoneNumber />} />
